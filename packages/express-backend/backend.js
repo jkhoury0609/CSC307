@@ -1,5 +1,6 @@
 // backend.js
 import express from "express";
+import cors from "cors";
 
 const users = {
   users_list: [
@@ -63,6 +64,7 @@ const findUserByNameAndJob = (name, job) => {
   );
 };
 
+app.use(cors());
 app.use(express.json());
 
 app.post("/users", (req, res) => {

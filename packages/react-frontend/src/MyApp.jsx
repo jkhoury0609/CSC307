@@ -23,12 +23,19 @@ function MyApp() {
   }
   ]);
 
-  function removeOneCharacter(index) {
-    const updated = characters.filter((character, i) => {
-      return i !== index;
-    });
-    setCharacters(updated);
-  }
+  function removeOneCharacter(id) {
+  deleteUser(id)
+    .then((res) => {
+      if (res.status === 204) {
+        setCharacters((prev) =>
+          prev.filter((character) => character.id !== id)
+        );
+      } else {
+        throw new Error("Delete failed");
+      }
+    })
+    .catch((error) => console.log(error));
+}
   // src/MyApp.js (a new inner function inside MyApp())
 
   function postUser(person) {
@@ -42,12 +49,23 @@ function MyApp() {
 
   return promise;
 }
-function updateList(person) {
-  postUser(person)
-    .then(() => setCharacters([...characters, person]))
-    .catch((error) => {
-      console.log(error);
+  function deleteUser(id) {
+    return fetch(`http://localhost:8000/users/${id}`, {
+      method: "DELETE",
     });
+  }
+  function updateList(person) {
+  postUser(person)
+    .then((res) => {
+      if (res.status === 201) {
+        return res.json();
+      }
+      throw new Error("User not created");
+    })
+    .then((newUser) => {
+      setCharacters((prev) => [...prev, newUser]);
+    })
+    .catch((error) => console.log(error));
 }
   
   function fetchUsers() {
